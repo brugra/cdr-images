@@ -19,7 +19,7 @@ if [ ! -s "$NVM_DIR/nvm.sh" ]; then
   echo "nvm not found, installing..."
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
   # Add nvm init to .bashrc and .bash_profile if not already present
-  for profile in "$HOME/.bashrc" "$HOME/.bash_profile"; do
+  for profile in "$HOME/.bashrc"; do
     if ! grep -q 'export NVM_DIR="$HOME/.nvm"' "$profile"; then
       echo 'export NVM_DIR="$HOME/.nvm"' >> "$profile"
     fi
@@ -35,4 +35,13 @@ if [ ! -s "$NVM_DIR/nvm.sh" ]; then
   nvm alias default 'lts/*'
 else
   echo "nvm is already installed."
+fi
+
+# if bash_profile does not load bashrc, make sure it does
+if [ -s "$HOME/.bash_profile" ]; then
+    if ! grep -q 'source "$HOME/.bashrc"' "$HOME/.bash_profile"; then
+        echo 'source "$HOME/.bashrc"' >> "$HOME/.bash_profile"
+    fi
+    else
+       echo 'source "$HOME/.bashrc"' > "$HOME/.bash_profile"
 fi
