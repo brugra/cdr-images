@@ -19,11 +19,13 @@ USER coder
 ENV NVM_DIR=/home/coder/.nvm
 ENV PATH="$HOME/.local/bin:$PATH"
 
-ADD startup.sh /opt/coder/startup.sh
-RUN chmod +x /opt/coder/startup.sh
-
 # Install Android command-line tools
 USER root
+
+ADD startup.sh /opt/coder/startup.sh
+RUN chmod +x /opt/coder/startup.sh && \
+    ln -s /opt/coder/startup.sh /usr/local/bin/coder-startup
+
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV PATH="$PATH:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/emulator"
 RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
