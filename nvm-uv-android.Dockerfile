@@ -30,7 +30,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
     nvm alias default 'lts/*'
 
 # Install uv (Python package manager)
-RUN pip3 install --user uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install Android command-line tools
 USER root
