@@ -20,6 +20,7 @@ ENV NVM_DIR=/home/coder/.nvm
 ENV PATH="$HOME/.local/bin:$PATH"
 
 ADD startup.sh /opt/coder/startup.sh
+RUN chmod +x /opt/coder/startup.sh
 
 # Install Android command-line tools
 USER root
