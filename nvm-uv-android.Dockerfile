@@ -55,6 +55,3 @@ RUN chown -R coder:coder $ANDROID_SDK_ROOT
 
 USER coder
 ENV PATH="$PATH:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/emulator"
-
-# Show versions for verification
-RUN node --version && npm --version && uv --version && java -version && sdkmanager --version
