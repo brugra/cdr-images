@@ -15,23 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Create .bashrc and .bash_profile for user coder
 USER coder
-RUN touch /home/coder/.bashrc /home/coder/.bash_profile && \
-    echo 'export NVM_DIR="$HOME/.nvm"' >> /home/coder/.bashrc && \
-    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/coder/.bashrc && \
-    echo 'export NVM_DIR="$HOME/.nvm"' >> /home/coder/.bash_profile && \
-    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/coder/.bash_profile
 
-# Install NVM and Node LTS for user coder
 ENV NVM_DIR=/home/coder/.nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
-    . "$NVM_DIR/nvm.sh" && \
-    nvm install --lts && \
-    nvm use --lts && \
-    nvm alias default 'lts/*'
+ENV PATH="$HOME/.local/bin:$PATH"
 
-# Install uv (Python package manager)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> /home/coder/.bashrc
+ADD startup.sh /opt/coder/startup.sh
 
 # Install Android command-line tools
 USER root
