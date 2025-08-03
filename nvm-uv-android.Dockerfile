@@ -13,6 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Minikube
+RUN curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && \
+    install minikube-linux-amd64 /usr/local/bin/minikube && \
+    rm minikube-linux-amd64
+
 # Create .bashrc and .bash_profile for user coder
 USER coder
 
