@@ -1,6 +1,6 @@
 FROM codercom/enterprise-base:ubuntu
 
-# Install dependencies for NVM, Node, uv, and Android tools
+# Install dependencies for NVM, Node, uv, Android tools, and zsh
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     git \
     ca-certificates \
+    zsh \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Minikube
@@ -18,8 +19,24 @@ RUN curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-li
     install minikube-linux-amd64 /usr/local/bin/minikube && \
     rm minikube-linux-amd64
 
-# Create .bashrc and .bash_profile for user coder
+# Set zsh as default shell for coder user
+USER root
+RUN chsh -s /usr/bin/zsh coder
+
+# Install oh-my-zsh and configure Rust environment
 USER coder
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable && \
+    echo 'source $HOME/.cargo/env' >> ~/.zshrc
+
+# Install and configure powerlevel10k theme
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k && \
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc && \
+    echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+ENV PATH="/home/coder/.cargo/bin:$PATH"
+ENV SHELL=/usr/bin/zsh
+
+# Create .bashrc and .bash_profile for user coder
 
 ENV NVM_DIR=/home/coder/.nvm
 ENV PATH="$HOME/.local/bin:$PATH"
