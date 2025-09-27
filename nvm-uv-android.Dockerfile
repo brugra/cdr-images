@@ -23,17 +23,7 @@ RUN curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-li
 USER root
 RUN chsh -s /usr/bin/zsh coder
 
-# Install oh-my-zsh and configure Rust environment
 USER coder
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable && \
-    echo 'source $HOME/.cargo/env' >> ~/.zshrc
-
-# Install and configure powerlevel10k theme
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k && \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc && \
-    echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
-ENV PATH="/home/coder/.cargo/bin:$PATH"
 ENV SHELL=/usr/bin/zsh
 
 # Create .bashrc and .bash_profile for user coder

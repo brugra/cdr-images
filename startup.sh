@@ -45,3 +45,48 @@ if [ -s "$HOME/.bash_profile" ]; then
     else
        echo 'source "$HOME/.bashrc"' > "$HOME/.bash_profile"
 fi
+
+# Install oh-my-zsh if not present
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "oh-my-zsh not found, installing..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+else
+  echo "oh-my-zsh is already installed."
+fi
+
+# Install powerlevel10k theme if not present
+if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
+  echo "powerlevel10k theme not found, installing..."
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+  # Configure powerlevel10k theme in .zshrc
+  if [ -f "$HOME/.zshrc" ]; then
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$HOME/.zshrc"
+    if ! grep -q 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' "$HOME/.zshrc"; then
+      echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> "$HOME/.zshrc"
+    fi
+  fi
+else
+  echo "powerlevel10k theme is already installed."
+fi
+
+# Install Rust if not present
+if ! command -v rustc &> /dev/null; then
+  if [ -f "$HOME/.cargo/env" ]; then
+    echo "Rust found but not in PATH, sourcing environment..."
+    source "$HOME/.cargo/env"
+  else
+    echo "Rust not found, installing..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+    # Add Rust to shell profiles for persistence
+    if [ -f "$HOME/.bashrc" ] && ! grep -q 'source $HOME/.cargo/env' "$HOME/.bashrc"; then
+      echo 'source $HOME/.cargo/env' >> "$HOME/.bashrc"
+    fi
+    if [ -f "$HOME/.zshrc" ] && ! grep -q 'source $HOME/.cargo/env' "$HOME/.zshrc"; then
+      echo 'source $HOME/.cargo/env' >> "$HOME/.zshrc"
+    fi
+    # Source for current session
+    source "$HOME/.cargo/env"
+  fi
+else
+  echo "Rust is already installed."
+fi
